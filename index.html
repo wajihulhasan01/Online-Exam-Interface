@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Online Exam Interface</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+</head>
+<body class="bg-gray-100 font-sans">
+    <div class="max-w-5xl mx-auto mt-5 shadow-lg bg-white rounded-lg overflow-hidden relative">
+        
+        <!-- Header -->
+        <div class="bg-gray-800 text-white p-4 flex justify-between items-center">
+            <h2 class="text-lg font-semibold">CS001 (VU-Computer Proficiency License)</h2>
+            <div class="flex items-center">
+                <span id="login-time" class="mr-4">Login Time --:-- | <b>GUEST</b></span>
+                <img id="profile-pic" src="https://via.placeholder.com/40" alt="Profile" class="w-10 h-10 rounded-full cursor-pointer">
+<input type="file" id="upload-profile" class="hidden" accept="image/*">
+
+
+            </div>
+        </div>
+        
+        <!-- Timer and Start Button -->
+        <div class="text-center p-3 bg-gray-300 text-gray-800 font-bold text-xl" id="timer-container">
+            <button id="start-btn" class="bg-green-500 text-white px-4 py-2 rounded-lg">Start Exam</button>
+            <div id="timer" class="hidden fixed top-14 left-1/2 transform -translate-x-1/2 
+            bg-gray-900 text-white w-16 h-16 flex items-center justify-center 
+            border-2 border-white rounded-full text-lg font-bold shadow-md">
+    <span>1500</span>
+</div>
+
+
+        </div>
+        
+        <div class="flex">
+            <!-- Question Section -->
+            <div class="w-3/4 p-5 animate__animated animate__fadeIn hidden" id="question-container">
+                <h3 class="text-lg font-semibold">Click 'Start Exam' to begin</h3>
+            </div>
+            
+            <!-- Summary Section -->
+            <div class="w-1/4 p-5 border-l bg-gray-50 hidden" id="summary-section">
+                <h3 class="bg-purple-700 p-1 m-0 text-lg font-semibold">Summary</h3>
+                <div class="grid grid-cols-5 gap-2 mt-3" id="question-nav">
+                    <!-- Question buttons dynamically generated -->
+                </div>
+                <div class="mt-4 text-gray-600 space-y-2">
+                    <div class="flex justify-between">
+                        <p>Attempted</p>
+                        <span id="attempted" class="font-bold">0%</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <p>Flagged</p>
+                        <span id="flagged" class="font-bold">0</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <p>Total</p>
+                        <span id="total" class="font-bold">25</span>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+        
+        <!-- Navigation -->
+        <div class="bg-gray-800 border-t p-4 flex justify-between hidden">
+            <button id="finish-btn" class="bg-red-500 text-black px-4 rounded-md">Finish Exam</button>
+            <button id="flag-btn" class="bg-purple-500 text-white px-4 rounded-md">Flag</button>
+            <div>
+            <button id="first-btn" class="bg-yellow-300 px-4 rounded-md">First</button>
+            <button id="last-btn" class="bg-yellow-300 px-4 rounded-md">Last</button>
+            </div>
+            <div>
+            <button id="prev-btn" class="bg-yellow-300 px-4 rounded-md">Previous</button>
+            <button id="next-btn" class="bg-yellow-300 px-4 rounded-md">Next</button> 
+            </div>          
+            <button id="save-btn" class="bg-green-500 text-white px-4 rounded-md">Save</button>
+            
+        </div>
+    </div>
+
+    <script src="./app.js"></script>
+</body>
+</html>
