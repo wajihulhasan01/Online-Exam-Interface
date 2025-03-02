@@ -1,3 +1,4 @@
+// Questions Array
 const questions = [
     { text: "Which of the following is not an advantage of computers?", options: ["Efficiency", "Reliability", "Safety", "Fast results"], answer: 2 },
     { text: "What does CPU stand for?", options: ["Central Process Unit", "Central Processing Unit", "Computer Personal Unit", "Central Processor Unit"], answer: 1 },
@@ -24,276 +25,254 @@ const questions = [
     { text: "Which key combination is used to copy?", options: ["Ctrl + P", "Ctrl + C", "Ctrl + V", "Ctrl + X"], answer: 1 },
     { text: "What is the purpose of an IP address?", options: ["Identify devices on a network", "Store data", "Secure a computer", "Access the internet"], answer: 0 },
     { text: "What does URL stand for?", options: ["Uniform Resource Locator", "Universal Resource Link", "Unique Reference Location", "Uniform Retrieval Language"], answer: 0 }
-
-        ];
-
-        let currentQuestion = 0;
-        let attempted = 0;
-        let flagged = 0;
-        let timeLeft = 1500;
-        let timerInterval;
-
-        function loadQuestion(index) {
-            const container = document.getElementById("question-container");
-            const question = questions[index];
-            container.innerHTML = `
-                <h3 class="text-lg font-semibold">Question No: ${index + 1} of ${questions.length}</h3>
-                <p class="mt-2">${question.text}</p>
-                
-                <div class="mt-4 space-y-2">
-                    <h3 class="text-lg font-semibold">Answer</h3>
-                    ${question.options.map((opt, i) => `
-                        <label class='block bg-gray-200 p-3 rounded-md cursor-pointer hover:bg-gray-300'>
-                            <input type='radio' name='answer' value='${i}' class='mr-2'> ${opt}
-                        </label>
-                    `).join('')}
-                </div>
-            `;
-        }
-
-        function updateAttempted() {
-            attempted++;
-            document.getElementById("attempted").textContent = `${(attempted / questions.length) * 100}%`;
-        }
-
-        function startExam() {
-    document.getElementById("start-btn").classList.add("hidden");
-    document.getElementById("timer").classList.remove("hidden");
-    
-    // Show question, summary, and navigation sections
-    document.getElementById("question-container").classList.remove("hidden");
-    // document.getElementById("question-nav").classList.remove("hidden");
-    document.getElementById("summary-section").classList.remove("hidden");
-    document.getElementById("timer").classList.remove("hidden");
-
-    document.querySelector(".border-t").classList.remove("hidden");
-
-    loadQuestion(currentQuestion);
-    startTimer();
-}
-
-
-        function startTimer() {
-            const timerElement = document.getElementById("timer");
-            timerInterval = setInterval(() => {
-                if (timeLeft > 0) {
-                    timeLeft--;
-                    timerElement.textContent = timeLeft;
-                } else {
-                    clearInterval(timerInterval);
-                    alert("Time's up!");
-                }
-            }, 1000);
-        }
-
-        function saveAnswer() {
-            alert("Answer saved!");
-        }
-
-        function finishExam() {
-            clearInterval(timerInterval);
-            alert("Exam finished!\nAttempted: " + attempted + "\nFlagged: " + flagged);
-        }
-
-        document.getElementById("start-btn").addEventListener("click", startExam);
-        document.getElementById("finish-btn").addEventListener("click", finishExam);
-        document.getElementById("save-btn").addEventListener("click", saveAnswer);
-        function updateLoginTime() {
-    const now = new Date();
-    const formattedTime = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-    document.getElementById("login-time").textContent = `Login Time ${formattedTime} | GUEST`;
-}
-setInterval(updateLoginTime, 1000);
-updateLoginTime();
-document.addEventListener("DOMContentLoaded", function () {
-    const profilePic = document.getElementById("profile-pic");
-    const fileInput = document.getElementById("upload-profile");
-
-    // Load saved profile picture from localStorage
-    const savedImage = localStorage.getItem("profilePic");
-    if (savedImage) {
-        profilePic.src = savedImage;
-    }
-
-    // Handle profile picture click
-    profilePic.addEventListener("click", function () {
-        if (profilePic.src.includes("placeholder.com")) {
-            fileInput.click();
-        } else {
-            alert("Profile Picture already uploaded!");
-        }
-    });
-
-    // Handle image upload
-    fileInput.addEventListener("change", function (event) {
-        const file = event.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = function (e) {
-                profilePic.src = e.target.result;
-                localStorage.setItem("profilePic", e.target.result); // Save to localStorage
-            };
-            reader.readAsDataURL(file);
-        }
-    });
-});
-
-document.getElementById("next-btn").addEventListener("click", function () {
-    if (currentQuestion < questions.length - 1) {
-        currentQuestion++;
-        loadQuestion(currentQuestion);
-    }
-});
-
-document.getElementById("prev-btn").addEventListener("click", function () {
-    if (currentQuestion > 0) {
-        currentQuestion--;
-        loadQuestion(currentQuestion);
-    }
-});
-
-document.getElementById("first-btn").addEventListener("click", function () {
-    currentQuestion = 0;
-    loadQuestion(currentQuestion);
-});
-
-document.getElementById("last-btn").addEventListener("click", function () {
-    currentQuestion = questions.length - 1;
-    loadQuestion(currentQuestion);
-});
-
-
-function saveAnswer() {
-    const selectedOption = document.querySelector("input[name='answer']:checked");
-    if (selectedOption) {
-        attempted++;
-        document.getElementById("attempted").textContent = `${Math.round((attempted / questions.length) * 100)}%`;
-        alert("Answer saved!");
-    } else {
-        alert("Please select an answer before saving.");
-    }
-}
-
-
-let userAnswers = new Array(questions.length).fill(null); // Store user responses
-
-function loadQuestion(index) {
+  ];
+  
+  // Global Variables
+  let currentQuestion = 0;
+  let attempted = 0;
+  let flagged = 0;
+  let timeLeft = 1500;
+  let timerInterval;
+  let userAnswers = new Array(questions.length).fill(null);
+  
+  // Load question into the DOM
+  function loadQuestion(index) {
+    currentQuestion = index;
     const container = document.getElementById("question-container");
-    const question = questions[index];
+  
+    // Load saved answers from localStorage (if available)
+    const savedAnswers = localStorage.getItem("userAnswers");
+    if (savedAnswers) {
+      userAnswers = JSON.parse(savedAnswers);
+    }
 
     container.innerHTML = `
-        <h3 class="text-lg font-semibold">Question No: ${index + 1} of ${questions.length}</h3>
-        <p class="mt-2">${question.text}</p>
-        <div class="mt-4 space-y-2">
-            ${question.options.map((opt, i) => `
-                <label class='block bg-gray-200 p-3 rounded-md cursor-pointer hover:bg-gray-300'>
-                    <input type='radio' name='answer' value='${i}' class='mr-2' ${userAnswers[index] === i ? "checked" : ""}> ${opt}
-                </label>
-            `).join('')}
-        </div>
-    `;
+  <h3 class="text-lg font-semibold bg-[#7E22CE] text-white">
+    Question ${index + 1} of ${questions.length}
+  </h3>
+  <p class="mt-2 p-2 rounded-md inline-block">
+    ${questions[index].text}
+  </p>
+  <div class="mt-4 space-y-2">
+  <h3 class="text-lg font-semibold bg-[#7E22CE] text-white">Answer</h3>
+    ${questions[index].options
+      .map((option, i) => `
+        <label class="block bg-gray-200 p-3 rounded-md cursor-pointer hover:bg-gray-300">
+          <input type="radio" name="answer" value="${i}" class="mr-2" ${userAnswers[index] === i ? "checked" : ""}>
+          ${option}
+        </label>
+      `)
+      .join('')}
+  </div>
+`;
 
-    // Detect answer selection
+  
+    // Attach event listener to capture answer change
     document.querySelectorAll("input[name='answer']").forEach(input => {
-        input.addEventListener("change", () => {
-            userAnswers[index] = parseInt(input.value);
-        });
+      input.addEventListener("change", () => {
+        userAnswers[index] = parseInt(input.value);
+      });
     });
-}
-
-function finishExam() {
-    clearInterval(timerInterval); // Stop the timer
-
-    // Calculate correct and incorrect answers
+  }
+  
+  // Generate summary navigation buttons
+  function generateSummary() {
+    const summaryContainer = document.getElementById("question-nav");
+    summaryContainer.innerHTML = "";
+  
+    for (let i = 0; i < questions.length; i++) {
+      const btn = document.createElement("button");
+      btn.textContent = i + 1;
+      btn.id = `q-${i}`;
+      btn.className = "px-2 py-1 rounded cursor-pointer";
+      if (userAnswers[i] !== null) btn.classList.add("bg-blue-300");
+      btn.onclick = () => {
+        if (!document.getElementById("finish-btn").disabled) {
+          currentQuestion = i;
+          loadQuestion(i);
+        }
+      };
+      summaryContainer.appendChild(btn);
+    }
+  }
+  
+  // Save the current answer
+  function saveAnswer() {
+    const selectedOption = document.querySelector("input[name='answer']:checked");
+    if (selectedOption) {
+      // Increase attempted count only if answer is saved first time
+      if (userAnswers[currentQuestion] === null) {
+        attempted++;
+      }
+    //   userAnswers[currentQuestion] = parseInt(selectedOption.value);
+      // Update summary button style
+      const qBtn = document.getElementById(`q-${currentQuestion}`);
+      if (qBtn && !qBtn.classList.contains("bg-blue-300")) {
+        qBtn.classList.add("bg-blue-300");
+      }
+      document.getElementById("attempted").textContent = `${Math.round((attempted / questions.length) * 100)}%`;
+    //   localStorage.setItem("userAnswers", JSON.stringify(userAnswers));
+      alert("Answer saved successfully!");
+    } else {
+      alert("Please select an answer before saving.");
+    }
+  }
+  
+  // Flag or unflag the current question
+  function toggleFlag() {
+    const qBtn = document.getElementById(`q-${currentQuestion}`);
+    if (!qBtn) return;
+    if (qBtn.classList.contains("bg-yellow-300")) {
+      flagged = Math.max(0, flagged - 1);
+      qBtn.classList.remove("bg-yellow-300");
+    } else {
+      flagged++;
+      qBtn.classList.add("bg-yellow-300");
+    }
+    document.getElementById("flagged").textContent = flagged;
+  }
+  
+  // Start the exam: setup UI and timer
+  function startExam() {
+    document.getElementById("start-btn").classList.add("hidden");
+    document.getElementById("timer").classList.remove("hidden");
+    document.getElementById("question-container").classList.remove("hidden");
+    document.getElementById("summary-section").classList.remove("hidden");
+    document.querySelector(".border-t").classList.remove("hidden");
+  
+    loadQuestion(currentQuestion);
+    generateSummary();
+    startTimer();
+  }
+  
+  // Timer functionality
+  function startTimer() {
+    const timerElement = document.getElementById("timer");
+    timerInterval = setInterval(() => {
+      if (timeLeft > 0) {
+        timeLeft--;
+        timerElement.textContent = timeLeft;
+      } else {
+        clearInterval(timerInterval);
+        alert("Time's up!");
+        finishExam();
+      }
+    }, 1000);
+  }
+  
+  // Finish exam, calculate results, and display them
+  function finishExam() {
+    clearInterval(timerInterval);
     let correct = 0;
     let incorrect = 0;
     attempted = 0;
-
-    userAnswers.forEach((answer, i) => {
-        if (answer !== null) {
-            attempted++;
-            if (answer === questions[i].answer) {
-                correct++;
-            } else {
-                incorrect++;
-            }
+  
+    userAnswers.forEach((ans, i) => {
+      if (ans !== null) {
+        attempted++;
+        if (ans === questions[i].answer) {
+          correct++;
+        } else {
+          incorrect++;
         }
+      }
     });
-
-    // Hide exam interface
+  
+    // Optionally, check for unanswered questions
+    const unanswered = questions.length - attempted;
+    if (unanswered > 0) {
+      const confirmFinish = confirm(`You have ${unanswered} unanswered question(s). Do you still want to finish?`);
+      if (!confirmFinish) return;
+    }
+  
+    // Hide exam interface and display results
     document.querySelector(".max-w-5xl").classList.add("hidden");
-
-    // Create result section
     const resultContainer = document.createElement("div");
-    resultContainer.classList = "max-w-lg mx-auto bg-white shadow-lg p-6 rounded-lg text-center mt-10";
+    resultContainer.className = "max-w-lg mx-auto bg-white shadow-lg p-6 rounded-lg text-center mt-10";
     resultContainer.innerHTML = `
-        <h2 class="text-2xl font-semibold text-gray-800">Exam Finished!</h2>
-        <p class="text-lg text-gray-600 mt-4">Your Result:</p>
-        <div class="mt-6">
-            <p class="text-xl"><b>Attempted Questions:</b> ${attempted} / ${questions.length}</p>
-            <p class="text-xl text-green-500"><b>Correct Answers:</b> ${correct}</p>
-            <p class="text-xl text-red-500"><b>Incorrect Answers:</b> ${incorrect}</p>
-            <p class="text-xl text-yellow-500"><b>Flagged Questions:</b> ${flagged}</p>
-        </div>
+      <h2 class="text-2xl font-semibold text-gray-800">Exam Finished!</h2>
+      <p class="text-lg text-gray-600 mt-4">Your Result:</p>
+      <div class="mt-6">
+        <p class="text-xl"><b>Attempted Questions:</b> ${attempted} / ${questions.length}</p>
+        <p class="text-xl text-green-500"><b>Correct Answers:</b> ${correct}</p>
+        <p class="text-xl text-red-500"><b>Incorrect Answers:</b> ${incorrect}</p>
+        <p class="text-xl text-yellow-500"><b>Flagged Questions:</b> ${flagged}</p>
+      </div>
     `;
-
-    // Append result section to body
     document.body.appendChild(resultContainer);
-
-    // Disable all buttons
+    // Disable further actions
     document.querySelectorAll("button").forEach(btn => btn.disabled = true);
-}
-
-
-
-function saveAnswer() {
-    const selectedOption = document.querySelector("input[name='answer']:checked");
-    if (selectedOption) {
-        const questionBtn = document.getElementById(`q-${currentQuestion}`);
-        if (!questionBtn.classList.contains("bg-blue-300")) {
-            attempted++;
-            questionBtn.classList.add("bg-blue-300");
-        }
-        document.getElementById("attempted").textContent = `${Math.min((attempted / questions.length) * 100, 100)}%`;
-        alert("Answer saved!");
-    } else {
-        alert("Please select an answer before saving.");
+  }
+  
+  // Update login time every second
+  function updateLoginTime() {
+    const now = new Date();
+    const formattedTime = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    document.getElementById("login-time").textContent = `Login Time ${formattedTime} | GUEST`;
+  }
+  setInterval(updateLoginTime, 1000);
+  updateLoginTime();
+  
+  // Profile picture upload and saving using localStorage
+  document.addEventListener("DOMContentLoaded", () => {
+    const profilePic = document.getElementById("profile-pic");
+    const fileInput = document.getElementById("upload-profile");
+  
+    const savedImage = localStorage.getItem("profilePic");
+    if (savedImage) {
+      profilePic.src = savedImage;
     }
-}
-
-document.getElementById("flag-btn").addEventListener("click", function () {
-    const questionBtn = document.getElementById(`q-${currentQuestion}`);
-
-    if (!questionBtn) return; // Ensure the button exists
-
-    if (questionBtn.classList.contains("bg-yellow-300")) {
-        flagged = Math.max(0, flagged - 1); // Prevent negative count
-        questionBtn.classList.remove("bg-yellow-300");
-    } else {
-        flagged++;
-        questionBtn.classList.add("bg-yellow-300");
-    }
-
-    document.getElementById("flagged").textContent = flagged;
-});
-
-
-
-function generateSummary() {
-    const summaryContainer = document.getElementById("question-nav");
-    summaryContainer.innerHTML = "";
-    for (let i = 0; i < questions.length; i++) {
-        const questionBtn = document.createElement("button");
-        questionBtn.textContent = i + 1;
-        questionBtn.id = `q-${i}`;
-        questionBtn.classList = "px-2 py-1 bg-gray-200 rounded cursor-pointer";
-        questionBtn.onclick = function () {
-            if (!document.getElementById("finish-btn").disabled) { // Prevent navigation after finishing
-                currentQuestion = i;
-                loadQuestion(i);
-            }
+  
+    profilePic.addEventListener("click", () => {
+      if (profilePic.src.includes("placeholder.com")) {
+        fileInput.click();
+      } else {
+        alert("Profile Picture already uploaded!");
+      }
+    });
+  
+    fileInput.addEventListener("change", event => {
+      const file = event.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = e => {
+          profilePic.src = e.target.result;
+          localStorage.setItem("profilePic", e.target.result);
         };
-        summaryContainer.appendChild(questionBtn);
+        reader.readAsDataURL(file);
+      }
+    });
+  });
+  
+  // Navigation buttons event listeners
+  document.getElementById("start-btn").addEventListener("click", startExam);
+  document.getElementById("save-btn").addEventListener("click", saveAnswer);
+  document.getElementById("flag-btn").addEventListener("click", toggleFlag);
+  document.getElementById("finish-btn").addEventListener("click", finishExam);
+  document.getElementById("next-btn").addEventListener("click", () => {
+    if (currentQuestion < questions.length - 1) {
+      loadQuestion(++currentQuestion);
     }
-}
-generateSummary();
+  });
+  document.getElementById("prev-btn").addEventListener("click", () => {
+    if (currentQuestion > 0) {
+      loadQuestion(--currentQuestion);
+    }
+  });
+  document.getElementById("first-btn").addEventListener("click", () => {
+    currentQuestion = 0;
+    loadQuestion(currentQuestion);
+  });
+  document.getElementById("last-btn").addEventListener("click", () => {
+    currentQuestion = questions.length - 1;
+    loadQuestion(currentQuestion);
+  });
+  
+  // On window load, restore saved answers if available
+//   window.onload = () => {
+//     const savedAnswers = localStorage.getItem("userAnswers");
+//     if (savedAnswers) {
+//       userAnswers = JSON.parse(savedAnswers);
+//     }
+//   };
+  
